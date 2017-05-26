@@ -5,6 +5,7 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <title>Two Rivers Carpooling</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
     <style>
         /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
@@ -27,6 +28,8 @@
     <div id="map"></div>
     <script>
         function initMap() {
+            // Next step: take address and convert to longitude and latitude
+            
             // krues8dr's gist is useful here as he creates custom properties and inserts them into the markers
             // https://gist.github.com/krues8dr/3040600 
 
@@ -35,7 +38,7 @@
                 zoom: 15,
                 center: {
                     lat: 38.9006,
-                    lng: -76.973706
+                    lng: -76.97151730000002
                 }, // Two Rivers @ Young Campus
                 mapTypeId: google.maps.MapTypeId.ROADMAP // google maps has a list of different map types
             };
@@ -43,20 +46,40 @@
             var map = new google.maps.Map(document.getElementById('map'), myOptions);
 
             // Create an array of alphabetical characters used to label the markers.
-            var markers = [];
             var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            
+            // Create an empty array of markers
+            var markers = [];
 
             // Add some markers to the map.
             markers = locations.map(function(location, i) {
+                console.log(location);
+                var content = '';
+                var kidContent = '';
+                var availContent = '';
+                var contact = ''
+                if (location.kids !== undefined) { 
+                    kidContent = '<p><strong>Number of kids</strong>: ' + location.kids + '</p>';
+                    contact = '<button type="button" class="btn btn-primary btn-sm">Contact</button>';
+                }
+                
+                if (location.seatsAvail !== undefined) { 
+                    availContent = '<p><strong>Number of open seats</strong>: ' + location.seatsAvail + '</p>';
+                }
                 var latLng = new google.maps.LatLng(parseFloat(location.lat),parseFloat(location.lng))
+                content = '<p>' + location.name + '</p>' +
+                            kidContent +
+                            availContent +
+                            '<p><strong>Address</strong>: ' + location.address + '</p></br>' +
+                            contact;
+                            
                 var infowindow = new google.maps.InfoWindow({
-                    content: '<p>' + location.name + '</p>' +
-                            '<p><strong>Address</strong>: ' + location.address + '</p>' +
-                            '<p><strong>Longitude</strong>: ' + location.lng + ' | <strong>Latitude</strong>: ' + location.lat + '</p>'
+                    content: content
                 });
                 
                 var marker = new google.maps.Marker({
                     position: latLng,
+                    map: map,
                     label: labels[i % labels.length],
                     title: "this is Marker " + labels[i % labels.length]
                 });
@@ -69,22 +92,22 @@
                 return marker;
             });
 
-            // Add a marker clusterer to manage the markers.
-            var markerCluster = new MarkerClusterer(map, markers, {
-                imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'
-            });
+            // // // Add a marker clusterer to manage the markers.
+            // var markerCluster = new MarkerClusterer(map, markers, {
+            //     imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'
+            // });
 
         }
         var locations=[
-            {lat:38.9006,lng:-76.973706,name:"Two Rivers @ Young Campus",address:"820 26th St NE, Washington, DC 20002"}, // Two Rivers @ Young Campus
-            {lat:38.888933,lng:-76.9846817,name:"Ashleigh and Tony McGovern",address:"23 16th St SE, Washington, DC 20003"}, // McGovern residence
-            {lat:38.889417,lng:-76.9823572, name:"Beth and Ben Wikler",address:"1609 E Capitol St SE, Washington, DC 20003"}, // Wikler residence
-            {lat:38.888366,lng:-76.9806172,name:"Bridgette and Brian Behling",address:"1715 A St SE, Washington, DC 20003"}, // Behling residence
-            {lat:38.894573,lng:-76.9848412,name:"Ami and Gary Dzeikan",address:"1423 D St NE, Washington, DC 20002"} // Dzeikan residence
+            {lat:38.9006,lng:-76.97151730000002,name:"Two Rivers @ Young Campus",address:"820 26th St NE, Washington, DC 20002"}, // Two Rivers @ Young Campus
+            {lat:38.888933,lng:-76.98249299999998,name:"Ashleigh and Tony McGovern",address:"23 16th St SE, Washington, DC 20003",kids:2,seatsAvail:0}, // McGovern residence
+            {lat:38.889417,lng:-76.98181, name:"Beth and Ben Wikler",address:"1609 E Capitol St SE, Washington, DC 20003",kids:2,seatsAvail:1}, // Wikler residence
+            {lat:38.888366,lng:-76.98007000000001,name:"Bridgette and Brian Behling",address:"1715 A St SE, Washington, DC 20003",kids:2,seatsAvail:1}, // Behling residence
+            {lat:38.894573,lng:-76.98435999999998,name:"Ami and Gary Dziekan",address:"1423 D St NE, Washington, DC 20002",kids:2,seatsAvail:2} // Dzeikan residence
         ];
     </script>
         
-    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+    <!--<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>-->
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAQpINpND56LnW6cQhVdUXqT4ntaEJpYWo&callback=initMap"></script>
 </body>
 
