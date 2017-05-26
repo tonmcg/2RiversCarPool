@@ -55,22 +55,32 @@
             markers = locations.map(function(location, i) {
                 console.log(location);
                 var content = '';
-                var kidContent = '';
-                var availContent = '';
-                var contact = ''
-                if (location.kids !== undefined) { 
-                    kidContent = '<p><strong>Number of kids</strong>: ' + location.kids + '</p>';
-                    contact = '<button type="button" class="btn btn-primary btn-sm">Contact</button>';
+                var numKids = '';
+                var numSeats = '';
+                var daysAvail = '';
+                var shiftAvail = '';
+                var contact = '';
+                
+                if (location.kids !== undefined) {
+                    numKids = '<p><strong>Number of kids</strong>: ' + location.kids + '</p>';
                 }
                 
-                if (location.seatsAvail !== undefined) { 
-                    availContent = '<p><strong>Number of open seats</strong>: ' + location.seatsAvail + '</p>';
+                if (location.kids !== undefined && location.numSeats !== 0) {
+                    daysAvail = '<p><strong>Days Available</strong>: ' + location.daysAvail.toString().split(',').join(', ') + '</p>';
+                    numSeats = '<p><strong>Number of open seats</strong>: ' + location.numSeats + '</p>';
+                    shiftAvail = '<p><strong>Pick-up or Drop-off?</strong>: ' + location.shiftAvail + '</p>';
+                    contact =  '<br><button type="button" class="btn btn-primary btn-sm">Contact</button>';
+                } else if (location.kids !== undefined && location.numSeats === 0) {
+                    numSeats = '<p><strong>No open seats available</strong></p>';
                 }
+
                 var latLng = new google.maps.LatLng(parseFloat(location.lat),parseFloat(location.lng))
-                content = '<p>' + location.name + '</p>' +
-                            kidContent +
-                            availContent +
-                            '<p><strong>Address</strong>: ' + location.address + '</p></br>' +
+                content = '<span>' + location.name + '</span></br>' +
+                            '<span>' + location.address + '</span></br></br>' +
+                            numKids +
+                            numSeats +
+                            daysAvail +
+                            shiftAvail +
                             contact;
                             
                 var infowindow = new google.maps.InfoWindow({
@@ -100,10 +110,10 @@
         }
         var locations=[
             {lat:38.9006,lng:-76.97151730000002,name:"Two Rivers @ Young Campus",address:"820 26th St NE, Washington, DC 20002"}, // Two Rivers @ Young Campus
-            {lat:38.888933,lng:-76.98249299999998,name:"Ashleigh and Tony McGovern",address:"23 16th St SE, Washington, DC 20003",kids:2,seatsAvail:0}, // McGovern residence
-            {lat:38.889417,lng:-76.98181, name:"Beth and Ben Wikler",address:"1609 E Capitol St SE, Washington, DC 20003",kids:2,seatsAvail:1}, // Wikler residence
-            {lat:38.888366,lng:-76.98007000000001,name:"Bridgette and Brian Behling",address:"1715 A St SE, Washington, DC 20003",kids:2,seatsAvail:1}, // Behling residence
-            {lat:38.894573,lng:-76.98435999999998,name:"Ami and Gary Dziekan",address:"1423 D St NE, Washington, DC 20002",kids:2,seatsAvail:2} // Dzeikan residence
+            {lat:38.888933,lng:-76.98249299999998,name:"Ashleigh and Tony McGovern",address:"23 16th St SE, Washington, DC 20003",kids:2,numSeats:0,daysAvail:['Tu','Th'],shiftAvail:'Drop-off'}, // McGovern residence
+            {lat:38.889417,lng:-76.98181, name:"Beth and Ben Wikler",address:"1609 E Capitol St SE, Washington, DC 20003",kids:2,numSeats:1,daysAvail:['M','W','F'],shiftAvail:'Drop-off'}, // Wikler residence
+            {lat:38.888366,lng:-76.98007000000001,name:"Bridgette and Brian Behling",address:"1715 A St SE, Washington, DC 20003",kids:2,numSeats:1,daysAvail:['F'],shiftAvail:'Drop-off'}, // Behling residence
+            {lat:38.894573,lng:-76.98435999999998,name:"Ami and Gary Dziekan",address:"1423 D St NE, Washington, DC 20002",kids:2,numSeats:2,daysAvail:['M','Tu','W','Th','F'],shiftAvail:'Both'} // Dzeikan residence
         ];
     </script>
         
