@@ -25,7 +25,12 @@
 </head>
 
 <body>
-    <div id="map"></div>
+    <!--<div class="row">-->
+    <!--    <div class="col-md-12">-->
+            <div id="map"></div>
+    <!--    </div>-->
+    <!--</div>-->
+    
     <script>
         function initMap() {
             // Next step: take address and convert to longitude and latitude
@@ -87,19 +92,39 @@
                     content: content
                 });
                 
-                var marker = new google.maps.Marker({
-                    position: latLng,
+                var circle = new google.maps.Circle({
+                    clickable: true,
+                    strokeColor: '#FF0000',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#FF0000',
+                    fillOpacity: 0.35,
                     map: map,
-                    label: labels[i % labels.length],
-                    title: "this is Marker " + labels[i % labels.length]
+                    center: latLng,
+                    radius: Math.sqrt(location.numSeats) * 100
                 });
-
-                marker.addListener("click", function() {
+          
+                circle.addListener("click", function(event) {
+                    // https://stackoverflow.com/questions/6584358/google-maps-v3-adding-an-info-window-to-a-circle
+                    infowindow.setPosition(event.latLng);
                     console.log("the user clicked on marker " + labels[i % labels.length]);
-                    infowindow.open(map,marker);
+                    infowindow.open(map,circle);
                 });
 
-                return marker;
+          // var marker = new google.maps.Marker({
+                //     position: latLng,
+                //     map: map,
+                //     label: labels[i % labels.length],
+                //     title: "this is Marker " + labels[i % labels.length]
+                // });
+
+                // marker.addListener("click", function() {
+                //     console.log("the user clicked on marker " + labels[i % labels.length]);
+                //     infowindow.open(map,marker);
+                // });
+
+                // return marker;
+                return circle;
             });
 
             // // // Add a marker clusterer to manage the markers.
