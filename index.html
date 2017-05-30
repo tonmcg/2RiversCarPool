@@ -11,13 +11,14 @@
        * element that contains the map. */
         
         #map {
-            height: 100%;
+            width: 800px;
+            height: 480px;
         }
         /* Optional: Makes the sample page fill the window. */
         
         html,
         body {
-            height: 100%;
+            /*height: 100%;*/
             margin: 0;
             padding: 0;
         }
@@ -32,30 +33,39 @@
     <!--</div>-->
     
     <script>
+            
+        var map;
+        var markers = [];
+        
         function initMap() {
             // Next step: take address and convert to longitude and latitude
             
             // krues8dr's gist is useful here as he creates custom properties and inserts them into the markers
             // https://gist.github.com/krues8dr/3040600 
+            
+            // Brendan Kenney's github is useful as he incorporates Crossfilter with Google Maps
+            // https://github.com/brendankenny/crossfilter-and-v3/
 
+            // what does this do?
+            google.maps.visualRefresh = true;
+            
+            // set the center of the map
+            var myLatLng = { lat: locations[0].lat, lng: locations[0].lng }; // Two Rivers @ Young Campus
             // set options for the map here
             var myOptions = {
-                zoom: 15,
-                center: {
-                    lat: 38.9006,
-                    lng: -76.97151730000002
-                }, // Two Rivers @ Young Campus
-                mapTypeId: google.maps.MapTypeId.ROADMAP // google maps has a list of different map types
+                zoom: 14,
+                center: myLatLng,
+                mapTypeId: google.maps.MapTypeId.ROADMAP, // google maps has a list of different map types
+                mapTypeControl: false, // look up this parameter; what does this do?
+                streetViewControl: false, // look up this parameter; what does this do?
+                panControl: false // look up this parameter; what does this do?
             };
 
-            var map = new google.maps.Map(document.getElementById('map'), myOptions);
+            map = new google.maps.Map(document.getElementById('map'), myOptions);
 
             // Create an array of alphabetical characters used to label the markers.
-            var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            // var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             
-            // Create an empty array of markers
-            var markers = [];
-
             // Add some markers to the map.
             markers = locations.map(function(location, i) {
                 console.log(location);
