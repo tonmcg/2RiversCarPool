@@ -14,22 +14,28 @@
 // https://github.com/brendankenny/crossfilter-and-v3/
 
 var map;
-var markers = [];
 var circles = [];
 var filter;
-var nameDim;
-var nameGroup;
-var kidsDim;
-var kidsGroup;
 var seatsDim;
 var seatsGroup;
 var latDimension;
 var lngDimension;
+var idDim;
 var idDimension;
 var idGrouping;
 
+var center = {
+        id: 0,
+        lat: 38.9006,
+        lng: -76.97151730000002,
+        name: "Two Rivers @ Young Campus",
+        address: "820 26th St NE, Washington, DC 20002"
+    
+}; // Two Rivers @ Young Campus
+
 function init() {
     initMap();
+    initCenter();
     initCrossfilter();
 
     // bind map bounds to lat/lng filter dimensions
@@ -69,8 +75,8 @@ function initMap() {
 
     // set the center of the map
     var myLatLng = {
-        lat: locations[0].lat,
-        lng: locations[0].lng
+        lat: center.lat,
+        lng: center.lng
     }; // Two Rivers @ Young Campus
     
     // set options for the map 
@@ -115,7 +121,7 @@ function initMap() {
         }
 
         var latLng = new google.maps.LatLng(parseFloat(location.lat), parseFloat(location.lng))
-        content = '<span>' + location.name + '</span></br>' +
+        var content = '<span>' + location.name + '</span></br>' +
             '<span>' + location.address + '</span></br></br>' +
             numKids +
             numSeats +
@@ -150,60 +156,47 @@ function initMap() {
 
 }
 
+function initCenter() {
+
+
+    var marker;
+
+    var content = '<span>' + center.name + '</span></br>' +
+        '<span>' + center.address + '</span></br></br>';
+
+    var infowindow = new google.maps.InfoWindow({
+        content: content
+    });
+
+    marker = new google.maps.Marker({
+        position: new google.maps.LatLng(center.lat, center.lng),
+        map: map
+    });
+    marker.addListener("click", function(event) {
+        // https://stackoverflow.com/questions/6584358/google-maps-v3-adding-an-info-window-to-a-circle
+        infowindow.setPosition(event.latLng);
+        infowindow.open(map, marker);
+    });
+
+}
+
 function initCrossfilter() {
     filter = crossfilter(locations);
 
     // simple dimensions and groupings for major variables
-    nameDim = filter.dimension(function(p) {
-        return p.name;
-    });
-    kidsDim = filter.dimension(function(p) {
-        return p.kidsString;
+    idDim = filter.dimension(function(p) {
+        return p.id;
     });
     seatsDim = filter.dimension(function(p) {
         return p.seatsString;
-    });
-    nameGroup = nameDim.group().reduceSum(function(d) {
-        return d.numSeats;
-    });
-    kidsGroup = kidsDim.group().reduceSum(function(d) {
-        return d.numSeats;
     });
     seatsGroup = seatsDim.group().reduceSum(function(d) {
         return d.numSeats;
     });
 
-    let kidsSelect = dc.selectMenu('#kids');
     let seatsSelect = dc.selectMenu('#seats');
     let datatable = dc.dataTable('#datatable');
     
-    kidsSelect
-        .dimension(kidsDim)
-        .group(kidsGroup)
-        // .filterDisplayed(function () {
-        //     return true;
-        // })
-        .multiple(false)
-        .numberVisible(null)
-        // .order(function (a,b) {
-        //     return a.key > b.key ? 1 : b.key > a.key ? -1 : 0;
-        // })
-        .title(function(d) {
-            return d.key;
-        })
-        .promptText('All Kids')
-        .promptValue(null);
-
-    kidsSelect.on('pretransition', function(chart) {
-        // add styling to select input
-        d3.select('#kids').classed('dc-chart', false);
-        chart.select('select').classed('form-control', true);
-    });
-    
-    kidsSelect.on('filtered',function(filter,i) {
-       updateMarkers();
-    });
-
     seatsSelect
         .dimension(seatsDim)
         .group(seatsGroup)
@@ -218,7 +211,7 @@ function initCrossfilter() {
         .title(function(d) {
             return d.key;
         })
-        .promptText('All Kids')
+        .promptText('All Seats')
         .promptValue(null);
 
     seatsSelect.on('pretransition', function(chart) {
@@ -234,7 +227,7 @@ function initCrossfilter() {
     datatable
         .width(768)
         .height(480)
-        .dimension(nameDim)
+        .dimension(idDim)
         .group(function(d) {
             return d;
         })
@@ -266,9 +259,13 @@ function initCrossfilter() {
 
             }])
         .sortBy(function(d) {
-            return d.numSeats
+            return d.numSeats;
         })
         .order(d3.descending);
+        
+        datatable.on('preRender',function(d) {
+            
+        });
 }
 
 // set visibility of markers based on crossfilter
@@ -286,13 +283,7 @@ function renderAll() {
   dc.renderAll();
 }
 
-var locations = [{
-        id: 0,
-        lat: 38.9006,
-        lng: -76.97151730000002,
-        name: "Two Rivers @ Young Campus",
-        address: "820 26th St NE, Washington, DC 20002"
-    }, // Two Rivers @ Young Campus
+var locations = [
     {
         id: 1,
         lat: 38.888933,
