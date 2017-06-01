@@ -11,7 +11,7 @@
        * element that contains the map. */
         
         #map {
-            width: 800px;
+            width: 600px;
             height: 480px;
         }
         /* Optional: Makes the sample page fill the window. */
@@ -40,23 +40,43 @@
                     <label>Address</label>
                     <input class="form-control"></input>
                 </div>
-                <div class="row">
-                    <div class="col-md-3">
-                        <label>Number of Kids</label>
-                        <select class="form-control"></select>    
-                    </div>
-                    <div class="col-md-3">
-                        <label>Number of Avaailble Seats</label>
-                        <select class="form-control"></select>    
-                    </div>
-                    <div class="col-md-3">
-                        <label>Days Available</label>
-                        <select class="form-control"></select>    
-                    </div>
-                    <div class="col-md-3">
-                        <label>Days Needed</label>
-                        <select class="form-control"></select>    
-                    </div>
+                <div class="col-md-3">
+                    <label>Number of Kids</label>
+                    <select class="form-control">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>    
+                </div>
+                <div class="col-md-3">
+                    <label>Number of Avaailble Seats</label>
+                    <select class="form-control">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>    
+                </div>
+                <div class="col-md-3">
+                    <label>Days Available</label>
+                    <select class="form-control">
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                    </select>    
+                </div>
+                <div class="col-md-3">
+                    <label>Days Needed</label>
+                    <select class="form-control">
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                    </select>    
                 </div>
             </div>
     <!--    </div>-->
@@ -81,8 +101,8 @@
             
             // set the center of the map
             var myLatLng = { lat: locations[0].lat, lng: locations[0].lng }; // Two Rivers @ Young Campus
-            // set options for the map here
-            var myOptions = {
+            // set option for the map here
+            var myoption = {
                 zoom: 14,
                 center: myLatLng,
                 mapTypeId: google.maps.MapTypeId.ROADMAP, // google maps has a list of different map types
@@ -91,7 +111,7 @@
                 panControl: false // look up this parameter; what does this do?
             };
 
-            map = new google.maps.Map(document.getElementById('map'), myOptions);
+            map = new google.maps.Map(document.getElementById('map'), myoption);
 
             // Create an array of alphabetical characters used to label the markers.
             // var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
