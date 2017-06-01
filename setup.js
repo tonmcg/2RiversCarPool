@@ -88,10 +88,11 @@ function initMap() {
 
     // Add circles to the map.
     // create array of circles from points and add them to the map
-    for (var i = 0; i < locations.length; i++) {
-        console.log(location);
-    
-        var location = locations[i];
+    // for (var i = 0; i < locations.length; i++) {
+    locations.forEach(function(location, i) {        
+        // var location = locations[i];
+
+        // console.log(location);
         var content = '';
         var numKids = '';
         var numSeats = '';
@@ -138,15 +139,14 @@ function initMap() {
             radius: Math.sqrt(location.numSeats) * 100,
             position: new google.maps.LatLng(location.lat, location.lng),
         });
-    
+        
         circles[i].addListener("click", function(event) {
             // https://stackoverflow.com/questions/6584358/google-maps-v3-adding-an-info-window-to-a-circle
             infowindow.setPosition(event.latLng);
-            console.log("the user clicked on marker " + labels[i % labels.length]);
-            infowindow.open(map, circle);
+            infowindow.open(map, circles[i]);
         });
 
-    }
+    });
 
 }
 
@@ -158,7 +158,7 @@ function initCrossfilter() {
         return p.name;
     });
     kidsDim = filter.dimension(function(p) {
-        return p.seatsString;
+        return p.kidsString;
     });
     seatsDim = filter.dimension(function(p) {
         return p.seatsString;
