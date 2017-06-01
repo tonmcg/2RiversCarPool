@@ -15,9 +15,14 @@
 
 var map;
 var markers = [];
+var circles = [];
 var filter;
 var nameDim;
 var nameGroup;
+var kidsDim;
+var kidsGroup;
+var seatsDim;
+var seatsGroup;
 var latDimension;
 var lngDimension;
 var idDimension;
@@ -44,7 +49,7 @@ function init() {
         latDimension.filterRange([southWest.lat(), northEast.lat()]);
 
         // NOTE: may want to debounce here, perhaps on requestAnimationFrame
-        dc.renderAll();
+        renderAll();
     });
 
     // dimension and group for looking up currently selected markers
@@ -55,7 +60,7 @@ function init() {
         return id;
     });
 
-    dc.renderAll();
+    renderAll();
 }
 
 function initMap() {
@@ -67,7 +72,8 @@ function initMap() {
         lat: locations[0].lat,
         lng: locations[0].lng
     }; // Two Rivers @ Young Campus
-    // set option for the map here
+    
+    // set options for the map 
     var myoption = {
         zoom: 14,
         center: myLatLng,
@@ -77,14 +83,15 @@ function initMap() {
         panControl: false // look up this parameter; what does this do?
     };
 
+    // initialize map
     map = new google.maps.Map(document.getElementById('map'), myoption);
 
-    // Create an array of alphabetical characters used to label the markers.
-    var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-    // Add some markers to the map.
-    markers = locations.map(function(location, i) {
+    // Add circles to the map.
+    // create array of circles from points and add them to the map
+    for (var i = 0; i < locations.length; i++) {
         console.log(location);
+    
+        var location = locations[i];
         var content = '';
         var numKids = '';
         var numSeats = '';
@@ -118,8 +125,8 @@ function initMap() {
         var infowindow = new google.maps.InfoWindow({
             content: content
         });
-
-        var circle = new google.maps.Circle({
+    
+        circles[i] = new google.maps.Circle({
             clickable: true,
             strokeColor: '#FF0000',
             strokeOpacity: 0.8,
@@ -128,36 +135,18 @@ function initMap() {
             fillOpacity: 0.35,
             map: map,
             center: latLng,
-            radius: Math.sqrt(location.numSeats) * 100
+            radius: Math.sqrt(location.numSeats) * 100,
+            position: new google.maps.LatLng(location.lat, location.lng),
         });
-
-        circle.addListener("click", function(event) {
+    
+        circles[i].addListener("click", function(event) {
             // https://stackoverflow.com/questions/6584358/google-maps-v3-adding-an-info-window-to-a-circle
             infowindow.setPosition(event.latLng);
             console.log("the user clicked on marker " + labels[i % labels.length]);
             infowindow.open(map, circle);
         });
 
-        // var marker = new google.maps.Marker({
-        //     position: latLng,
-        //     map: map,
-        //     label: labels[i % labels.length],
-        //     title: "this is Marker " + labels[i % labels.length]
-        // });
-
-        // marker.addListener("click", function() {
-        //     console.log("the user clicked on marker " + labels[i % labels.length]);
-        //     infowindow.open(map,marker);
-        // });
-
-        // return marker;
-        return circle;
-    });
-
-    // // // Add a marker clusterer to manage the markers.
-    // var markerCluster = new MarkerClusterer(map, markers, {
-    //     imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'
-    // });
+    }
 
 }
 
@@ -168,12 +157,80 @@ function initCrossfilter() {
     nameDim = filter.dimension(function(p) {
         return p.name;
     });
+    kidsDim = filter.dimension(function(p) {
+        return p.seatsString;
+    });
+    seatsDim = filter.dimension(function(p) {
+        return p.seatsString;
+    });
     nameGroup = nameDim.group().reduceSum(function(d) {
         return d.numSeats;
     });
+    kidsGroup = kidsDim.group().reduceSum(function(d) {
+        return d.numSeats;
+    });
+    seatsGroup = seatsDim.group().reduceSum(function(d) {
+        return d.numSeats;
+    });
 
+    let kidsSelect = dc.selectMenu('#kids');
+    let seatsSelect = dc.selectMenu('#seats');
     let datatable = dc.dataTable('#datatable');
+    
+    kidsSelect
+        .dimension(kidsDim)
+        .group(kidsGroup)
+        // .filterDisplayed(function () {
+        //     return true;
+        // })
+        .multiple(false)
+        .numberVisible(null)
+        // .order(function (a,b) {
+        //     return a.key > b.key ? 1 : b.key > a.key ? -1 : 0;
+        // })
+        .title(function(d) {
+            return d.key;
+        })
+        .promptText('All Kids')
+        .promptValue(null);
 
+    kidsSelect.on('pretransition', function(chart) {
+        // add styling to select input
+        d3.select('#kids').classed('dc-chart', false);
+        chart.select('select').classed('form-control', true);
+    });
+    
+    kidsSelect.on('filtered',function(filter,i) {
+       updateMarkers();
+    });
+
+    seatsSelect
+        .dimension(seatsDim)
+        .group(seatsGroup)
+        // .filterDisplayed(function () {
+        //     return true;
+        // })
+        .multiple(false)
+        .numberVisible(null)
+        // .order(function (a,b) {
+        //     return a.key > b.key ? 1 : b.key > a.key ? -1 : 0;
+        // })
+        .title(function(d) {
+            return d.key;
+        })
+        .promptText('All Kids')
+        .promptValue(null);
+
+    seatsSelect.on('pretransition', function(chart) {
+        // add styling to select input
+        d3.select('#kids').classed('dc-chart', false);
+        chart.select('select').classed('form-control', true);
+    });
+
+    seatsSelect.on('filtered',function(filter,i) {
+       updateMarkers();
+    });
+    
     datatable
         .width(768)
         .height(480)
@@ -214,6 +271,21 @@ function initCrossfilter() {
         .order(d3.descending);
 }
 
+// set visibility of markers based on crossfilter
+function updateMarkers() {
+  var pointIds = idGrouping.all();
+  for (var i = 0; i < pointIds.length; i++) {
+    var pointId = pointIds[i];
+    circles[pointId.key].setVisible(pointId.value > 0);
+  }
+}
+
+// Whenever the brush moves, re-render charts and map markers
+function renderAll() {
+  updateMarkers();
+  dc.renderAll();
+}
+
 var locations = [{
         id: 0,
         lat: 38.9006,
@@ -228,7 +300,9 @@ var locations = [{
         email: "tonmcg@gmail.com",
         name: "Ashleigh and Tony McGovern",
         address: "23 16th St SE, Washington, DC 20003",
+        kidsString: "Two",
         kids: 2,
+        seatsString: "None",
         numSeats: 0,
         daysAvail: ['Tu', 'Th'],
         shiftAvail: 'Drop-off'
@@ -240,7 +314,9 @@ var locations = [{
         email: "benwikler@gmail.com",
         name: "Beth and Ben Wikler",
         address: "1609 E Capitol St SE, Washington, DC 20003",
+        kidsString: "Two",
         kids: 2,
+        seatsString: "One",
         numSeats: 1,
         daysAvail: ['M', 'W', 'F'],
         shiftAvail: 'Drop-off'
@@ -252,7 +328,9 @@ var locations = [{
         email: "babehling@gmail.com",
         name: "Bridgette and Brian Behling",
         address: "1715 A St SE, Washington, DC 20003",
+        kidsString: "Two",
         kids: 2,
+        seatsString: "One",
         numSeats: 1,
         daysAvail: ['F'],
         shiftAvail: 'Drop-off'
@@ -264,7 +342,9 @@ var locations = [{
         email: "ggdzeikan1@yahoo.com",
         name: "Ami and Gary Dziekan",
         address: "1423 D St NE, Washington, DC 20002",
+        kidsString: "Two",
         kids: 2,
+        seatsString: "Two",
         numSeats: 2,
         daysAvail: ['M', 'Tu', 'W', 'Th', 'F'],
         shiftAvail: 'Both'
