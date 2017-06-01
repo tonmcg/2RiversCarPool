@@ -158,7 +158,7 @@
                     daysAvail = '<p><strong>Days Available</strong>: ' + location.daysAvail.toString().split(',').join(', ') + '</p>';
                     numSeats = '<p><strong>Number of open seats</strong>: ' + location.numSeats + '</p>';
                     shiftAvail = '<p><strong>Pick-up or Drop-off?</strong>: ' + location.shiftAvail + '</p>';
-                    contact =  '<br><a type="button" href="mailto:'+location.email+'" class="btn btn-primary btn-sm">Contact</a>';
+                    contact =  '<br><a type="button" href="mailto:'+location.email+'?subject=Looking to Carpool?" class="btn btn-primary btn-sm">Contact</a>';
                 } else if (location.kids !== undefined && location.numSeats === 0) {
                     numSeats = '<p><strong>No open seats available</strong></p>';
                 }
