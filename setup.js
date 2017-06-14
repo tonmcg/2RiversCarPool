@@ -1,11 +1,15 @@
 /* TODO: 
-                                                1.take address and convert to longitude and latitude
-                                                1a.autofill geocoding of address
-                                                2.make number selections into multiple selections
-                                                3.add crossfilter table that filters map on selections
-                                                4.add mailto functionality for Contact button
-                                                5.
-                                            */
+    Create map - DONE
+    Create initial data - DONE
+    Add address markers based on available data - DONE
+    Make markers into circles whose circumference represents volume or magnitude - DONE
+    Add text boxes that show marker information on click - DONE
+    Add crossfilter table that filters map on selections - DONE
+    Add mailto functionality for Contact button - DONE
+    Take address and convert to longitude and latitude
+    Autofill geocoding of address
+    Make number selections into multiple selections
+*/
 
 // krues8dr's gist is useful here as he creates custom properties and inserts them into the markers
 // https://gist.github.com/krues8dr/3040600 
@@ -277,7 +281,7 @@ function updateMarkers() {
   }
 }
 
-// Whenever the brush moves, re-render charts and map markers
+// Whenever the map moves, re-render table and map markers
 function renderAll() {
   updateMarkers();
   dc.renderAll();
@@ -296,7 +300,8 @@ var locations = [
         seatsString: "None",
         numSeats: 0,
         daysAvail: ['Tu', 'Th'],
-        shiftAvail: 'Drop-off'
+        shiftAvail: 'Drop-off',
+        campus: "Young"
     }, // McGovern residence
     {
         id: 2,
@@ -310,7 +315,8 @@ var locations = [
         seatsString: "One",
         numSeats: 1,
         daysAvail: ['M', 'W', 'F'],
-        shiftAvail: 'Drop-off'
+        shiftAvail: 'Drop-off',
+        campus: "Young"
     }, // Wikler residence
     {
         id: 3,
@@ -324,7 +330,8 @@ var locations = [
         seatsString: "One",
         numSeats: 1,
         daysAvail: ['F'],
-        shiftAvail: 'Drop-off'
+        shiftAvail: 'Drop-off',
+        campus: "Young"
     }, // Behling residence
     {
         id: 4,
@@ -338,6 +345,97 @@ var locations = [
         seatsString: "Two",
         numSeats: 2,
         daysAvail: ['M', 'Tu', 'W', 'Th', 'F'],
-        shiftAvail: 'Both'
-    } // Dzeikan residence
+        shiftAvail: 'Both',
+        campus: "Young"
+    }, // Dzeikan residence
+    {
+        id: 5,
+        lat: 38.8955737,
+        lng: -76.9912875,
+        email: "clairewatkins@hotmail.com",
+        name: "Claire Watkins",
+        address: "1232 Duncan Place NE, Washington, DC 20002",
+        kidsString: "One",
+        kids: 1,
+        seatsString: "Two",
+        numSeats: 2,
+        daysAvail: ['M', 'Tu'],
+        shiftAvail: 'Both',
+        campus: "Young"
+    },
+    {
+        id: 6,
+        lat: 38.9687926,
+        lng: -77.034575,
+        email: "Kalizya@gmail.com",
+        name: "Kalizya Hutchinson",
+        address: "1368 Underwood Street NW, Washington, DC 20012",
+        kidsString: "One",
+        kids: 1,
+        seatsString: "One",
+        numSeats: 1,
+        daysAvail: ['Tu','W','Th','F'],
+        shiftAvail: 'Both',
+        campus: "Young"
+    },
+    {
+        id: 7,
+        lat: 38.886355,
+        lng: -76.9934746,
+        email: "yw111@yahoo.com",
+        name: "Yiru	Wanf",
+        address: "246 11th Street SE, Washington, DC 20003",
+        kidsString: "Two",
+        kids: 2,
+        seatsString: "Two",
+        numSeats: 2,
+        daysAvail: ['Tu','W','Th','F'],
+        shiftAvail: 'Both',
+        campus: "Young"
+    },
+    {
+        id: 8,
+        lat: 38.8814495,
+        lng: -76.9841979,
+        email: "alden.nouga@gmail.com",
+        name: "Alden Nouga",
+        address: "534 16th Street SE, Washington, DC 20003",
+        kidsString: "Two",
+        kids: 2,
+        seatsString: "",
+        numSeats: null,
+        daysAvail: [],
+        shiftAvail: 'Both',
+        campus: "4th"
+    },
+    {
+        id: 8,
+        lat: 38.8881688,
+        lng: -76.9874432,
+        email: "jody.kent@gmail.com",
+        name: "Jody	Kent Lavy",
+        address: "114 14th Street SE, Washington, DC 20003",
+        kidsString: "One",
+        kids: 1,
+        seatsString: "Two",
+        numSeats: 2,
+        daysAvail: ['M','Tu','W','Th','F'],
+        shiftAvail: 'Both',
+        campus: "Young"
+    },
+    {
+        id: 8,
+        lat: 38.8881688,
+        lng: -76.9874432,
+        email: "tinatennessen@gmail.com",
+        name: "Tina	Tennessen",
+        address: "1525 A Street SE, Washington, DC 20003",
+        kidsString: "Two",
+        kids: 2,
+        seatsString: "Three",
+        numSeats: 3,
+        daysAvail: [],
+        shiftAvail: 'Both',
+        campus: "Young"
+    }
 ];
